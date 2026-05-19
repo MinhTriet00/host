@@ -226,11 +226,11 @@
         <p class="subtitle" id="giaoDienPhu">Nhập tên của bạn để xem vũ trụ nói gì nhé!</p>
         
         <div class="secret-panel" id="bangSecret">
-            <h3>🕵️‍♂️ CHẾ ĐỘ SIÊU GAY</h3>
-            <p style="font-size: 0.85rem; color: #7f1d1d; margin-top: 0; margin-bottom: 1rem;">Hệ thống yêu cầu xác minh mã lớp bảo mật mật mã.</p>
+            <h3>CHẾ ĐỘ SIÊU GAY</h3>
+            <p style="font-size: 0.85rem; color: #7f1d1d; margin-top: 0; margin-bottom: 1rem;">Chứng minh mày là gay</p>
             
             <div onkeypress="if(event.keyCode == 13) xacThucPin()">
-                <input type="text" id="maPin" placeholder="Mã pin bí mật..." autocomplete="off" autocorrect="off" spellcheck="false" style="-webkit-text-security: disc;">
+                <input type="text" id="maPin" placeholder="Mã pin bí mật..." autocomplete="off" autocorrect="off" spellcheck="false">
                 <div class="secret-btn-group">
                     <button onclick="xacThucPin()" style="background-color: #dc2626;">Kích hoạt</button>
                     <button onclick="dongBangSecret()" class="btn-cancel">Hủy</button>
@@ -309,11 +309,11 @@
                 document.documentElement.style.setProperty('--primary', '#dc2626');
                 document.documentElement.style.setProperty('--primary-hover', '#b91c1c');
                 
-                giaoDienPhu.innerText = "⚡ QUYỀN NĂNG VUA GAY ĐĐ ĐƯỢC THIẾT LẬP ⚡";
+                giaoDienPhu.innerText = "⚡ QUYỀN NĂNG VUA GAY ĐÃ ĐƯỢC THIẾT LẬP ⚡";
                 giaoDienPhu.style.color = "#ef4444";
                 giaoDienPhu.style.fontWeight = "bold";
 
-                hieuUngNhieu.style.opacity = '0.35';
+                hieuUngNhieu.style.opacity = '0.6';
                 hieuUngNhieu.style.mixBlendMode = 'multiply';
                 
                 dongBangSecret();
@@ -322,10 +322,10 @@
                 
                 const caKhiaList = [
                     "🛑 Sai rồi! Định giả vờ làm bóng hả? Không dễ đâu! 💅",
-                    "🚨 Hệ thống phát hiện 'Trai Thẳng' xâm nhập!!!",
+                    "Thằng wibu đi ra mày",
                     "🤡 Gà! Bạn quá thẳng để bước vào lãnh địa này.",
                     "🏳️‍🌈 Xin lỗi, máy quét không nhận diện được sóng gay từ bạn.",
-                    "👀 Tính lừa bổn cung à? Về học lại mật khẩu đi cưng!"
+                    "Sủa gâu gâu thì cho"
                 ];
                 const loiNhan = caKhiaList[Math.floor(Math.random() * caKhiaList.length)];
                 
@@ -380,7 +380,8 @@
                 `Hệ thống đánh giá bạn mang ${phanTram}% sự mặn mòi của biển cả. 🌊`,
                 `Độ 'ngáo ngơ' của bạn hôm nay chạm mốc ${phanTram}%. Cẩn thận nhé!`,
                 `Vũ trụ gửi gắm đến bạn ${phanTram}% năng lượng tích cực ngày hôm nay. ✨`,
-                `Phát hiện ${phanTram}% sự lươn lẹo trong con người này! 👀`
+                `Phát hiện ${phanTram}% sự lươn lẹo trong con người này! 👀`,
+                `Địt mẹ thằng ${ten} này ${phanTram}% gay,
             ];
             
             const cauBoi = khoLuuTru[seed % khoLuuTru.length];
