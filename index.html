@@ -141,3 +141,59 @@
         </div>
 
         <div id="ketQua" class="result-box">
+            <h2 id="tenHienThi"></h2>
+            <p id="noiDungBoi"></p>
+        </div>
+    </div>
+
+    <script>
+        // Thuật toán băm chuỗi để cùng 1 tên luôn ra 1 số giống nhau
+        function laySeedTuTen(str) {
+            let hash = 0;
+            str = str.toLowerCase().trim();
+            for (let i = 0; i < str.length; i++) {
+                let char = str.charCodeAt(i);
+                hash = ((hash << 5) - hash) + char;
+                hash = hash & hash;
+            }
+            return Math.abs(hash);
+        }
+
+        function boiToan() {
+            const ten = document.getElementById('ten').value;
+            if (!ten.trim()) {
+                alert("Vui lòng nhập tên của bạn nhé!");
+                return;
+            }
+
+            // Tính % dựa trên hạt giống (seed) của cái tên
+            const seed = laySeedTuTen(ten);
+            const phanTram = seed % 101; 
+            
+            // Kho câu bói ngẫu nhiên nhưng cố định theo tên
+            const khoLuuTru = [
+                `Máy quét nhận diện bạn có ${phanTram}% độ 'Bóng'. Quá bất ngờ! 🏳️‍🌈`,
+                `Chỉ số nhan sắc tiềm ẩn của bạn đang dừng ở mức ${phanTram}%.`,
+                `Hệ thống đánh giá bạn mang ${phanTram}% sự mặn mòi của biển cả. 🌊`,
+                `Độ 'ngáo ngơ' của bạn hôm nay chạm mốc ${phanTram}%. Cẩn thận nhé!`,
+                `Vũ trụ gửi gắm đến bạn ${phanTram}% năng lượng tích cực ngày hôm nay. ✨`,
+                `Phát hiện ${phanTram}% sự lươn lẹo trong con người này! 👀`
+            ];
+            
+            const cauBoi = khoLuuTru[seed % khoLuuTru.length];
+
+            // Hiển thị ra màn hình kèm hiệu ứng
+            const ketQuaBox = document.getElementById('ketQua');
+            
+            // Reset animation bằng cách ẩn/hiện lại
+            ketQuaBox.style.animation = 'none';
+            ketQuaBox.offsetHeight; /* Trigger reflow */
+            ketQuaBox.style.animation = null; 
+
+            document.getElementById('tenHienThi').innerText = "Chào " + ten + "! ✨";
+            document.getElementById('noiDungBoi').innerText = cauBoi;
+            ketQuaBox.style.display = "block";
+        }
+    </script>
+</body>
+</html>
