@@ -28,7 +28,37 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
-            transition: background 0.5s ease; /* Thêm hiệu ứng chuyển màu mượt */
+            transition: background 0.5s ease;
+            overflow: hidden; 
+        }
+
+        /* --- HIỆU ỨNG HẠT NHIỄU CHUYỂN ĐỘNG --- */
+        .noise-overlay {
+            position: fixed;
+            top: -50%; 
+            left: -50%; 
+            width: 200vw; 
+            height: 200vh;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.15;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            mix-blend-mode: overlay; 
+            animation: noiseAnim 0.15s infinite; 
+        }
+
+        @keyframes noiseAnim {
+            0% { transform: translate(0, 0); }
+            10% { transform: translate(-2%, -2%); }
+            20% { transform: translate(1%, 2%); }
+            30% { transform: translate(-2%, 1%); }
+            40% { transform: translate(2%, -1%); }
+            50% { transform: translate(-1%, 2%); }
+            60% { transform: translate(2%, -2%); }
+            70% { transform: translate(0%, 1%); }
+            80% { transform: translate(-2%, -1%); }
+            90% { transform: translate(1%, 2%); }
+            100% { transform: translate(0, 0); }
         }
 
         .container {
@@ -40,7 +70,23 @@
             width: 100%;
             max-width: 420px;
             animation: fadeIn 0.6s ease-out;
-            transition: box-shadow 0.5s ease;
+            transition: all 0.4s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- HIỆU ỨNG RUNG LẮC KHI SAI PIN --- */
+        .shake-error {
+            animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+            box-shadow: 0 0 30px rgba(220, 38, 38, 0.6) !important;
+            border: 1px solid #dc2626;
+        }
+
+        @keyframes shake {
+            10%, 90% { transform: translate3d(-2px, 0, 0) rotate(-0.5deg); }
+            20%, 80% { transform: translate3d(4px, 0, 0) rotate(0.5deg); }
+            30%, 50%, 70% { transform: translate3d(-6px, 0, 0) rotate(-1deg); }
+            40%, 60% { transform: translate3d(6px, 0, 0) rotate(1deg); }
         }
 
         h1 {
@@ -48,9 +94,12 @@
             font-size: 1.8rem;
             color: var(--primary);
             margin-bottom: 0.5rem;
-            /* Thêm CSS để chống bôi đen chữ khi nhấn giữ trên điện thoại */
+            /* CÁC THUỘC TÍNH FIX LỖI "HIỆN BOX XANH" VÀ CHỐNG COPY KHI NHẤN GIỮ */
             -webkit-user-select: none;
             user-select: none; 
+            -webkit-tap-highlight-color: transparent; 
+            -webkit-touch-callout: none; 
+            outline: none;
             cursor: pointer;
         }
 
@@ -58,6 +107,7 @@
             color: var(--text-muted);
             font-size: 0.95rem;
             margin-bottom: 2rem;
+            transition: color 0.3s ease;
         }
 
         input[type=text] {
@@ -97,10 +147,6 @@
             box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
         }
 
-        button:active {
-            transform: translateY(0);
-        }
-
         .result-box {
             margin-top: 2rem;
             padding: 1.5rem;
@@ -119,12 +165,45 @@
             margin-bottom: 0.5rem;
         }
 
-        .result-box p {
-            margin: 0;
-            font-size: 1.05rem;
-            color: var(--text-main);
-            line-height: 1.5;
-            font-weight: 500;
+        /* --- THIẾT KẾ BẢNG NHẬP PIN BÍ MẬT NẰM TRONG WEB --- */
+        .secret-panel {
+            background: #fff5f5;
+            border: 2px dashed #f87171;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            display: none;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        .secret-panel h3 {
+            margin-top: 0;
+            color: #dc2626;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .secret-btn-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            background-color: #64748b;
+        }
+        .btn-cancel:hover {
+            background-color: #475569;
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+        }
+
+        .error-text {
+            color: #dc2626;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0;
+            display: none;
+            animation: fadeIn 0.3s ease;
         }
 
         /* Animations */
@@ -134,18 +213,34 @@
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
+    <div class="noise-overlay" id="hieuUngNhieu"></div>
+
     <div class="container" id="mainContainer">
         <h1 id="tieuDe">🔮 Check độ gay</h1>
-        <p class="subtitle">Nhập tên của bạn để xem vũ trụ nói gì nhé!</p>
+        <p class="subtitle" id="giaoDienPhu">Nhập tên của bạn để xem vũ trụ nói gì nhé!</p>
         
-        <div onkeypress="if(event.keyCode == 13) boiToan()">
-            <input type="text" id="ten" placeholder="Ví dụ: Nguyễn Văn A" required>
+        <div class="secret-panel" id="bangSecret">
+            <h3>🕵️‍♂️ CHẾ ĐỘ SIÊU GAY</h3>
+            <p style="font-size: 0.85rem; color: #7f1d1d; margin-top: 0; margin-bottom: 1rem;">Hệ thống yêu cầu xác minh mã lớp bảo mật mật mã.</p>
+            
+            <div onkeypress="if(event.keyCode == 13) xacThucPin()">
+                <input type="text" id="maPin" placeholder="Mã pin bí mật..." autocomplete="off" autocorrect="off" spellcheck="false" style="-webkit-text-security: disc;">
+                <div class="secret-btn-group">
+                    <button onclick="xacThucPin()" style="background-color: #dc2626;">Kích hoạt</button>
+                    <button onclick="dongBangSecret()" class="btn-cancel">Hủy</button>
+                </div>
+            </div>
+            <p class="error-text" id="txtLoi"></p>
+        </div>
+
+        <div id="formChinh" onkeypress="if(event.keyCode == 13) boiToan()">
+            <input type="text" id="ten" placeholder="Ví dụ: Nguyễn Văn A" required autocomplete="off">
             <button onclick="boiToan()">Check</button>
         </div>
 
@@ -156,53 +251,94 @@
     </div>
 
     <script>
-        // --- XỬ LÝ CHẾ ĐỘ SIÊU GAY (EASTER EGG) ---
         let isSuperGayMode = false;
         let holdTimer;
-        const tieuDe = document.getElementById('tieuDe');
 
-        // Bắt đầu đếm thời gian khi nhấn chuột/chạm tay
-        function batDauNhan() {
+        const tieuDe = document.getElementById('tieuDe');
+        const hieuUngNhieu = document.getElementById('hieuUngNhieu');
+        const mainContainer = document.getElementById('mainContainer');
+        const bangSecret = document.getElementById('bangSecret');
+        const formChinh = document.getElementById('formChinh');
+        const txtLoi = document.getElementById('txtLoi');
+        const giaoDienPhu = document.getElementById('giaoDienPhu');
+
+        // --- SỰ KIỆN NHẤN GIỮ ---
+        function batDauNhan(e) {
+            // Không chặn e.preventDefault() ở đây để tránh làm chết nút bấm trên một số màn hình
             holdTimer = setTimeout(() => {
-                kichHoatCheDoAn();
-            }, 1500); // Nhấn giữ 1.5 giây để kích hoạt
+                moBangSecret();
+            }, 1000); // Giảm thời gian nhấn giữ xuống 1 giây cho lẹ
         }
 
-        // Hủy đếm nếu thả chuột/tay ra sớm
         function ketThucNhan() {
             clearTimeout(holdTimer);
         }
 
-        // Gắn sự kiện cho cả PC (mouse) và Mobile (touch)
         tieuDe.addEventListener('mousedown', batDauNhan);
         tieuDe.addEventListener('mouseup', ketThucNhan);
         tieuDe.addEventListener('mouseleave', ketThucNhan);
-        tieuDe.addEventListener('touchstart', batDauNhan);
+        tieuDe.addEventListener('touchstart', batDauNhan, {passive: true});
         tieuDe.addEventListener('touchend', ketThucNhan);
+        tieuDe.addEventListener('touchcancel', ketThucNhan);
 
-        function kichHoatCheDoAn() {
-            if (isSuperGayMode) return; // Đã bật rồi thì thôi
+        // --- ĐIỀU KHIỂN BẢNG PIN TRÊN GIAO DIỆN ---
+        function moBangSecret() {
+            if (isSuperGayMode) return;
+            formChinh.style.display = "none";
+            document.getElementById('ketQua').style.display = "none";
+            txtLoi.style.display = "none";
+            bangSecret.style.display = "block";
+            document.getElementById('maPin').focus();
+        }
 
-            const pin = prompt("Chế độ siêu gay\\nNhập mã pin:");
+        function dongBangSecret() {
+            bangSecret.style.display = "none";
+            formChinh.style.display = "block";
+            document.getElementById('maPin').value = "";
+        }
+
+        function xacThucPin() {
+            // Dùng toLowerCase() để người dùng nhập "Tôi là gay" hay "TÔI LÀ GAY" đều ăn
+            const pinVal = document.getElementById('maPin').value.trim().toLowerCase();
             
-            if (pin === "tôi là gay") {
+            if (pinVal === "tôi là gay") {
                 isSuperGayMode = true;
                 
-                // Đổi nền web sang màu đỏ rực lửa
                 document.body.style.background = "linear-gradient(135deg, #ff0000 0%, #7a0000 100%)";
-                document.getElementById('mainContainer').style.boxShadow = "0 10px 30px rgba(255, 0, 0, 0.4)";
-                
-                // Đổi màu viền kết quả cho tone-sur-tone
+                mainContainer.style.boxShadow = "0 10px 30px rgba(255, 0, 0, 0.4)";
                 document.documentElement.style.setProperty('--primary', '#dc2626');
+                document.documentElement.style.setProperty('--primary-hover', '#b91c1c');
                 
-                alert("🔥 Đã kích hoạt CHẾ ĐỘ SIÊU GAY! 🔥");
-            } else if (pin !== null) {
-                alert("Sai mã PIN!");
+                giaoDienPhu.innerText = "⚡ QUYỀN NĂNG VUA GAY ĐĐ ĐƯỢC THIẾT LẬP ⚡";
+                giaoDienPhu.style.color = "#ef4444";
+                giaoDienPhu.style.fontWeight = "bold";
+
+                hieuUngNhieu.style.opacity = '0.35';
+                hieuUngNhieu.style.mixBlendMode = 'multiply';
+                
+                dongBangSecret();
+            } else {
+                mainContainer.classList.add('shake-error');
+                
+                const caKhiaList = [
+                    "🛑 Sai rồi! Định giả vờ làm bóng hả? Không dễ đâu! 💅",
+                    "🚨 Hệ thống phát hiện 'Trai Thẳng' xâm nhập!!!",
+                    "🤡 Gà! Bạn quá thẳng để bước vào lãnh địa này.",
+                    "🏳️‍🌈 Xin lỗi, máy quét không nhận diện được sóng gay từ bạn.",
+                    "👀 Tính lừa bổn cung à? Về học lại mật khẩu đi cưng!"
+                ];
+                const loiNhan = caKhiaList[Math.floor(Math.random() * caKhiaList.length)];
+                
+                txtLoi.innerText = loiNhan;
+                txtLoi.style.display = "block";
+
+                setTimeout(() => {
+                    mainContainer.classList.remove('shake-error');
+                }, 500);
             }
         }
 
-
-        // --- THUẬT TOÁN BÓI TOÁN CŨ ---
+        // --- THUẬT TOÁN BÓI TOÁN ---
         function laySeedTuTen(str) {
             let hash = 0;
             str = str.toLowerCase().trim();
@@ -223,21 +359,18 @@
 
             const ketQuaBox = document.getElementById('ketQua');
             
-            // Reset animation
             ketQuaBox.style.animation = 'none';
-            ketQuaBox.offsetHeight; /* Trigger reflow */
+            ketQuaBox.offsetHeight; 
             ketQuaBox.style.animation = null; 
 
             document.getElementById('tenHienThi').innerText = "Chào " + ten + "! ✨";
 
-            // KIỂM TRA: Nếu đang bật chế độ Siêu Gay thì ghi đè kết quả
             if (isSuperGayMode) {
                 document.getElementById('noiDungBoi').innerText = `Xin chào vua gay, ${ten}. Ngài đánh rơi thứ này👑`;
                 ketQuaBox.style.display = "block";
-                return; // Kết thúc hàm luôn
+                return; 
             }
 
-            // Nếu bình thường thì chạy logic băm chuỗi
             const seed = laySeedTuTen(ten);
             const phanTram = seed % 101; 
             
