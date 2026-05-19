@@ -28,6 +28,7 @@
             margin: 0;
             padding: 20px;
             box-sizing: border-box;
+            transition: background 0.5s ease; /* Thêm hiệu ứng chuyển màu mượt */
         }
 
         .container {
@@ -39,6 +40,7 @@
             width: 100%;
             max-width: 420px;
             animation: fadeIn 0.6s ease-out;
+            transition: box-shadow 0.5s ease;
         }
 
         h1 {
@@ -46,6 +48,10 @@
             font-size: 1.8rem;
             color: var(--primary);
             margin-bottom: 0.5rem;
+            /* Thêm CSS để chống bôi đen chữ khi nhấn giữ trên điện thoại */
+            -webkit-user-select: none;
+            user-select: none; 
+            cursor: pointer;
         }
 
         p.subtitle {
@@ -103,7 +109,7 @@
             border-left: 4px solid var(--primary);
             text-align: left;
             animation: slideUp 0.5s ease-out forwards;
-            display: none; /* Ẩn đi lúc đầu */
+            display: none;
         }
 
         .result-box h2 {
@@ -134,8 +140,8 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🔮 Check độ gay</h1>
+    <div class="container" id="mainContainer">
+        <h1 id="tieuDe">🔮 Check độ gay</h1>
         <p class="subtitle">Nhập tên của bạn để xem vũ trụ nói gì nhé!</p>
         
         <div onkeypress="if(event.keyCode == 13) boiToan()">
@@ -150,7 +156,53 @@
     </div>
 
     <script>
-        // Thuật toán băm chuỗi để cùng 1 tên luôn ra 1 số giống nhau
+        // --- XỬ LÝ CHẾ ĐỘ SIÊU GAY (EASTER EGG) ---
+        let isSuperGayMode = false;
+        let holdTimer;
+        const tieuDe = document.getElementById('tieuDe');
+
+        // Bắt đầu đếm thời gian khi nhấn chuột/chạm tay
+        function batDauNhan() {
+            holdTimer = setTimeout(() => {
+                kichHoatCheDoAn();
+            }, 1500); // Nhấn giữ 1.5 giây để kích hoạt
+        }
+
+        // Hủy đếm nếu thả chuột/tay ra sớm
+        function ketThucNhan() {
+            clearTimeout(holdTimer);
+        }
+
+        // Gắn sự kiện cho cả PC (mouse) và Mobile (touch)
+        tieuDe.addEventListener('mousedown', batDauNhan);
+        tieuDe.addEventListener('mouseup', ketThucNhan);
+        tieuDe.addEventListener('mouseleave', ketThucNhan);
+        tieuDe.addEventListener('touchstart', batDauNhan);
+        tieuDe.addEventListener('touchend', ketThucNhan);
+
+        function kichHoatCheDoAn() {
+            if (isSuperGayMode) return; // Đã bật rồi thì thôi
+
+            const pin = prompt("Chế độ siêu gay\\nNhập mã pin:");
+            
+            if (pin === "tôi là gay") {
+                isSuperGayMode = true;
+                
+                // Đổi nền web sang màu đỏ rực lửa
+                document.body.style.background = "linear-gradient(135deg, #ff0000 0%, #7a0000 100%)";
+                document.getElementById('mainContainer').style.boxShadow = "0 10px 30px rgba(255, 0, 0, 0.4)";
+                
+                // Đổi màu viền kết quả cho tone-sur-tone
+                document.documentElement.style.setProperty('--primary', '#dc2626');
+                
+                alert("🔥 Đã kích hoạt CHẾ ĐỘ SIÊU GAY! 🔥");
+            } else if (pin !== null) {
+                alert("Sai mã PIN!");
+            }
+        }
+
+
+        // --- THUẬT TOÁN BÓI TOÁN CŨ ---
         function laySeedTuTen(str) {
             let hash = 0;
             str = str.toLowerCase().trim();
@@ -169,11 +221,26 @@
                 return;
             }
 
-            // Tính % dựa trên hạt giống (seed) của cái tên
+            const ketQuaBox = document.getElementById('ketQua');
+            
+            // Reset animation
+            ketQuaBox.style.animation = 'none';
+            ketQuaBox.offsetHeight; /* Trigger reflow */
+            ketQuaBox.style.animation = null; 
+
+            document.getElementById('tenHienThi').innerText = "Chào " + ten + "! ✨";
+
+            // KIỂM TRA: Nếu đang bật chế độ Siêu Gay thì ghi đè kết quả
+            if (isSuperGayMode) {
+                document.getElementById('noiDungBoi').innerText = `Xin chào vua gay, ${ten}. Ngài đánh rơi thứ này👑`;
+                ketQuaBox.style.display = "block";
+                return; // Kết thúc hàm luôn
+            }
+
+            // Nếu bình thường thì chạy logic băm chuỗi
             const seed = laySeedTuTen(ten);
             const phanTram = seed % 101; 
             
-            // Kho câu bói ngẫu nhiên nhưng cố định theo tên
             const khoLuuTru = [
                 `Máy quét nhận diện bạn có ${phanTram}% độ 'Bóng'. Quá bất ngờ! 🏳️‍🌈`,
                 `Chỉ số nhan sắc tiềm ẩn của bạn đang dừng ở mức ${phanTram}%.`,
@@ -184,16 +251,6 @@
             ];
             
             const cauBoi = khoLuuTru[seed % khoLuuTru.length];
-
-            // Hiển thị ra màn hình kèm hiệu ứng
-            const ketQuaBox = document.getElementById('ketQua');
-            
-            // Reset animation bằng cách ẩn/hiện lại
-            ketQuaBox.style.animation = 'none';
-            ketQuaBox.offsetHeight; /* Trigger reflow */
-            ketQuaBox.style.animation = null; 
-
-            document.getElementById('tenHienThi').innerText = "Chào " + ten + "! ✨";
             document.getElementById('noiDungBoi').innerText = cauBoi;
             ketQuaBox.style.display = "block";
         }
