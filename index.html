@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>🔮 Bói Tên Vui Vẻ</title>
+    <style>
+        /* Bạn giữ nguyên CSS mình đã cho ở câu trả lời trước nhé */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔮 Bói Tên Vui Vẻ</h1>
+        <input type="text" id="ten" placeholder="Nhập tên của bạn">
+        <button onclick="boiToan()">Khám phá ngay</button>
+
+        <div id="ketQua" class="result-box" style="display:none;">
+            <h2 id="tenHienThi"></h2>
+            <p id="noiDungBoi"></p>
+        </div>
+    </div>
+
+    <script>
+        function boiToan() {
+            const ten = document.getElementById('ten').value;
+            if (!ten) return alert("Nhập tên đi bạn ơi!");
+
+            // Thuật toán đơn giản bằng JS
+            const phanTram = ten.length * 7 % 101; 
+            const ketQua = `Máy quét nhận diện bạn có ${phanTram}% độ 'Bóng'. Quá bất ngờ! 🏳️‍🌈`;
+
+            // Hiển thị kết quả
+            document.getElementById('tenHienThi').innerText = "Chào " + ten + "! ✨";
+            document.getElementById('noiDungBoi').innerText = ketQua;
+            document.getElementById('ketQua').style.display = "block";
+        }
+    </script>
+</body>
+</html>
